@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8">
+  <title>云阅读登录</title>
+  <link rel="stylesheet" href="../css/user/denglu.css">
+  <script type="text/javascript" src="../js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+</head>
+
+
+<body>
+  <div class="content">
+    <div class="form sign-in">
+      <h2>欢迎回来</h2>
+      <label style="margin-top: 60px;">
+        <span>用户名</span>
+        <input type="email" id="uAccount" />
+      </label>
+      <label>
+        <span>密码</span>
+        <input type="password" id="uPassword" />
+      </label>
+      <button type="button" class="submit" id="deng" style="margin-top: 80px;">登 录</button>
+    </div>
+    <div class="sub-cont">
+      <div class="img">
+        <div class="img__text m--up">
+          <h2>还未注册？</h2>
+          <p>立即注册，发现大量机会！</p>
+        </div>
+        <div class="img__text m--in">
+          <h2>已有帐号？</h2>
+          <p>有帐号就登录吧，好久不见了！</p>
+        </div>
+        <div class="img__btn">
+          <span class="m--up">注 册</span>
+          <span class="m--in">登 录</span>
+        </div>
+      </div>
+      <div class="form sign-up">
+        <h2>立即注册</h2>
+        <label>
+          <span>用户名</span>
+          <input type="text" id="uAcc" /> <input type="text" id="checkAccount" style="display: none;">
+        </label>
+        <label>
+          <span>手机号</span>
+          <input type="text" id="tell" />
+        </label>
+        <label>
+          <span style="display: block;">性别</span>
+          <input type="radio" name="2" value="1" id="sex" class="sex">
+          <div class="st" style="margin-right: 10px">男</div>
+          <input type="radio" name="2" value="0" id="sex" class="sex">
+          <div class="st">女</div>
+        </label>
+        <label>
+          <span>邮箱</span>
+          <input type="email" id="email" />
+        </label>
+        <label>
+          <span>密码</span>
+          <input type="password" id="pass" />
+        </label>
+        <button type="button" class="submit" id="zhu">注 册</button>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
+<!-- 登录注册页面的相互切换 -->
+<script>
+  document.querySelector('.img__btn').addEventListener('click', function () {
+    document.querySelector('.content').classList.toggle('s--signup')
+  })
+</script>
+
+<!-- 规范验证 -->
+<script>
+
+  $('#uAcc').blur(function () {
+    var uAccount = $('#uAccount').val();
+    $.ajax({
+      url: "http://127.0.0.1:8001/front/login/showByUAccount"
+      , type: "get"
+      , data: {
+        'uAccount': uAccount
+      }
+      , success: function (datas) {
+        console.log(datas)
+        if (datas.data.length != 0) {
+          alert('用户名不可以重复')
+          $('#checkAccount').val('datas.data')
+          return false;
+        }
+      }
+    });
+  });
+
+  // $('#tell').blur(function () {
+  //   var tell = $('#tell').val()
+  //   var reg = /^1\d{10}$/
+  //   if (!reg.test(tell)) {
+  //     alert('手机号错误，请输入正确手机号');
+  //     return false;
+  //   }
+  // });
+  // $('#email').blur(function () {
+  //   var email = $('#email').val()
+  //   var reg = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
+  //   if (!reg.test(email)) {
+  //     alert('邮箱格式错误，请输入正确邮箱');
+  //     return false;
+  //   }
+  // });
+</script>
+
+<!-- 监听提交 -->
+<script>
+  // 监听登录按钮
+  $("button[id=deng]").click(function () {
+    var uAccount = $('#uAccount').val();
+    var uPassword = $('#uPassword').val()
+    if (uAccount == '' || uPassword == '') {
+      alert('用户名或密码不能为空')
+      return false;
+    }
+    $.ajax({
+      url: "http://127.0.0.1:8001/front/login/showOne"
+      , type: "get"
+      , data: {
+        'uAccount': uAccount
+        , 'uPassword': uPassword
+      }
+      , success: function (datas) {
+        console.log(datas)
+        if (datas.data != null) {
+          if (datas.data.status == 1) {
+            var storage = window.sessionStorage;
+            // 想要用sessionStorage存储对象，必须先将对象转化为json字符串
+            var objStr = JSON.stringify(datas.data);
+            storage.setItem('user', objStr);
+            location.href = 'index.html'
+            return false;
+          }
+
+        }
+        alert('账号或密码错误')
+      }
+    });
+  });
+  // 监听注册按钮
+  $("button[id=zhu]").click(function () {
+    var uAcc = $('#uAcc').val()
+    var tell = $('#tell').val()
+    var sex = $('input:radio[id=sex]:checked').val()
+    var email = $('#email').val()
+    var pass = $('#pass').val()
+    // 判断是否为空
+    if (uAcc == '' || tell == '' || sex == '' || email == '' || pass == '' || sex == undefined) {
+      alert('注册中信息都不能为空')
+      return false;
+    }
+    // 查看规范性
+    var reg = /^1\d{10}$/
+    if (!reg.test(tell)) {
+      alert('手机号错误，请输入正确手机号');
+      return false;
+    }
+    // 查看规范性
+    var reg = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/
+    if (!reg.test(email)) {
+      alert('邮箱格式错误，请输入正确邮箱');
+      return false;
+    }
+    // 最后验证用户名是否重复
+    var checkAccount = $('#checkAccount').val()
+    if (checkAccount != '') {
+      alert('用户名不可以重复,请修改用户名');
+      return false;
+    }
+
+    $.ajax({
+      url: "http://127.0.0.1:8001/front/login/addOne"
+      , type: "post"
+      , data: {
+        'uAccount': uAcc
+        , 'uPassword': pass
+        , 'sex': sex
+        , 'phone': tell
+        , 'email': email
+      }
+      , success: function (datas) {
+        console.log(datas)
+        alert('注册成功，快去登录吧')
+      }
+
+    });
+
+  });
+</script>

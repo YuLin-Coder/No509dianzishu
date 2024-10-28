@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+  <meta charset="UTF-8">
+  <title>欢迎页面-X-admin2.2</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+    content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+  <link rel="stylesheet" href="../css/admin/font.css">
+  <link rel="stylesheet" href="../css/admin/xadmin.css">
+  <script type="text/javascript" src="../js/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../js/xadmin.js"></script>
+  <script type="text/javascript" src="../js/checkAdmin.js"></script>
+</head>
+
+
+<body>
+  <div class="layui-fluid">
+    <div class="layui-row">
+      <form class="layui-form">
+        <div class="layui-form-item">
+          <label for="uAccount" class="layui-form-label">
+            <span class="x-red">*</span>账号</label>
+          <div class="layui-input-inline">
+            <input type="text" id="uAccount" name="uAccount" required="" lay-verify="nikename" autocomplete="off"
+              class="layui-input"></div>
+          <div class="layui-form-mid layui-word-aux">
+            <span class="x-red">*</span>将是唯一登录方式
+          </div>
+        </div>
+        <div class="layui-inline" style="top: -9px;">
+          <label class="layui-form-label">
+            <span class="x-red">*</span>性别</label>
+          <div class="layui-input-block" id="kuang">
+            <input type="radio" name="sex" id="sex" value="1" title="男" lay-filter="ChoiceRadio" checked>
+            <input type="radio" name="sex" id="sex" value="0" title="女" lay-filter="ChoiceRadio">
+          </div>
+        </div>
+        <div class="layui-form-item">
+          <label for="phone" class="layui-form-label">
+            <span class="x-red">*</span>手机号</label>
+          <div class="layui-input-inline">
+            <input type="tel" id="phone" name="phone" required="" lay-verify="phone" autocomplete="off"
+              class="layui-input"></div>
+        </div>
+        <div class="layui-form-item">
+          <label for="email" class="layui-form-label">
+            <span class="x-red">*</span>邮箱</label>
+          <div class="layui-input-inline">
+            <input type="text" id="email" name="email" required="" lay-verify="email" autocomplete="off"
+              class="layui-input"></div>
+          <div class="layui-form-mid layui-word-aux">
+            <span class="x-red">*</span>邮箱</div>
+        </div>
+        <div class="layui-form-item">
+          <div class="layui-form-item">
+            <label for="uPassword" class="layui-form-label">
+              <span class="x-red">*</span>密码</label>
+            <div class="layui-input-inline">
+              <input type="password" id="uPassword" name="uPassword" required="" lay-verify="pass" autocomplete="off"
+                class="layui-input"></div>
+            <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+          </div>
+          <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label">
+              <span class="x-red">*</span>确认密码</label>
+            <div class="layui-input-inline">
+              <input type="password" id="L_repass" name="repass" required="" lay-verify="repass" autocomplete="off"
+                class="layui-input"></div>
+          </div>
+          <div class="layui-form-item">
+            <label for="L_repass" class="layui-form-label"></label>
+            <button class="layui-btn" lay-filter="add" id="addBtn" lay-submit="">增加</button></div>
+      </form>
+    </div>
+  </div>
+  <script>
+
+    layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function () {
+      var laydate = layui.laydate //日期
+        , laypage = layui.laypage //分页
+        , layer = layui.layer //弹层
+        , table = layui.table //表格
+        , carousel = layui.carousel //轮播
+        , upload = layui.upload //上传
+        , element = layui.element //元素操作
+        , slider = layui.slider //滑块
+        , $ = layui.jquery
+        , form = layui.form // 表单
+
+      //自定义验证规则
+      form.verify({
+        nikename: function (value) {
+          if (value.length < 5) {
+            return '昵称至少得5个字符啊';
+          }
+        },
+        pass: [/(.+){6,12}$/, '密码必须6到12位'],
+        repass: function (value) {
+          if ($('#uPassword').val() != $('#L_repass').val()) {
+            return '两次密码不一致';
+          }
+        }
+      });
+
+      $('#uAccount').blur(function () {
+        $.ajax({
+          url: "http://127.0.0.1:8001/after/user/showByUAccount"
+          , type: "get"
+          , data: { "uAccount": $('#uAccount').val() }
+          // 不写就直接报415
+          , contentType: 'application/json;charset=UTF-8'
+          , success: function (datas) {
+            console.log(datas)
+            if (datas.data.length != 0) {
+              layer.alert("账号已存在", {
+                icon: 5
+              },
+                function () {
+                  $('#addBtn').addClass("layui-btn-disabled").attr("disabled", true);
+                  layer.close(layer.index);
+                });
+              return true;
+            }
+            $('#addBtn').removeClass("layui-btn-disabled").attr("disabled", false);
+
+
+          }
+        });
+      });
+
+      //监听提交
+      form.on('submit(add)',
+        function (data) {
+          $.ajax({
+            url: "http://127.0.0.1:8001/after/user/addOne"
+            , type: "post"
+            , data: JSON.stringify(data.field)
+            // 不写就直接报415
+            , contentType: 'application/json;charset=UTF-8'
+            , success: function (datas) {
+              if (datas.data != 0) {
+                layer.alert("添加成功", {
+                  icon: 6
+                },
+                  function () {
+                    // 获取父窗口
+                    window.parent.location.reload();
+                    // 获得frame索引
+                    var index = parent.layer.getFrameIndex(window.name);
+                    //关闭当前frame
+                    parent.layer.close(index);
+                  });
+                return false;
+              }
+              layer.msg('添加失败', { time: 1000 });
+            }
+          });
+          return false;
+        });
+
+    });
+  </script>
+
+</body>
+
+</html>

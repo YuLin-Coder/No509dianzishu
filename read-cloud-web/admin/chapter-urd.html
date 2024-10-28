@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+  <meta charset="UTF-8">
+  <title>分类列表</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+    content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+  <link rel="stylesheet" href="../css/admin/font.css">
+  <link rel="stylesheet" href="../css/admin/xadmin.css">
+  <script src="../js/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../js/xadmin.js"></script>
+  <script type="text/javascript" src="../js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="../js/checkAdmin.js"></script>
+</head>
+
+<body>
+  
+  <div class="x-nav">
+    <span class="layui-breadcrumb">
+      <a href="">首页</a>
+      <a href="">演示</a>
+      <a>
+        <cite>导航元素</cite></a>
+    </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+      onclick="location.reload()" title="刷新">
+      <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i>
+    </a>
+  </div>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body ">
+            <form class="layui-form layui-col-space5">
+              <div class="demoTable" style="display:inline;">
+
+                <div class="layui-inline">
+                  <label class="layui-form-label">书名</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="bTitle" id="bTitle" lay-verify="required" autocomplete="off"
+                      class="layui-input">
+                  </div>
+                </div>
+
+                <div class="layui-inline">
+                  <label class="layui-form-label">章节</label>
+                  <div class="layui-input-inline">
+                    <input type="text" name="cTitle" id="cTitle" lay-verify="required" autocomplete="off"
+                      class="layui-input">
+                  </div>
+
+                  <div class="layui-btn" id="search" data-type="reload">搜索</div>
+                </div>
+
+
+                <div style="margin-left: 2px;">
+                  <div class="layui-inline">
+                    <label class="layui-form-label">作者</label>
+                    <div class="layui-input-inline">
+                      <input type="text" name="author" id="author" lay-verify="required" readonly autocomplete="off"
+                        class="layui-input">
+                    </div>
+                  </div>
+
+                  <div class="layui-inline">
+                    <label class="layui-form-label">标题</label>
+                    <div class="layui-input-inline">
+                      <input type="text" name="cTit" id="cTit" lay-verify="required" readonly autocomplete="off"
+                        class="layui-input">
+                    </div>
+                  </div>
+                </div>
+
+                <textarea name="words" id="words" lay-verify="required"></textarea>
+
+                <div class="layui-form-item">
+                  <label for="L_repass" class="layui-form-label"></label>
+                  <div class="layui-btn" lay-filter="add" id="add" lay-submit="">提交</div>
+                </div>
+
+              </div>
+            </form>
+            <hr>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script>
+  layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider', 'layedit']
+    , function () {
+      var laydate = layui.laydate //日期
+        , laypage = layui.laypage //分页
+        , layer = layui.layer //弹层
+        , table = layui.table //表格
+        , carousel = layui.carousel //轮播
+        , upload = layui.upload //上传
+        , element = layui.element //元素操作
+        , slider = layui.slider //滑块
+        , $ = layui.jquery
+        , form = layui.form // 表单
+        , layedit = layui.layedit // 富文本编辑
+
+      //建立编辑器
+      var inde = layedit.build('words', {
+        height: 380 //设置编辑器高度
+        , tool: ['strong' //加粗
+          , 'italic' //斜体
+          , 'underline' //下划线
+          , 'del' //删除线
+          , '|' //分割线
+          , 'left' //左对齐
+          , 'center' //居中对齐
+          , 'right' //右对齐
+        ]
+      });
+
+
+      // 搜索书籍，并显示
+      $('#search').on('click', function () {
+        var num = $('#cTitle').val();
+        var bTitle = $('#bTitle').val();
+        // 检查输入框规范性
+        if (bTitle == "" || bTitle == null) {
+          layer.msg('书名不能为空', { time: 1500 });
+          return false;
+        }
+        if (num == "" || num == null) {
+          layer.msg('章节不能为空', { time: 1500 });
+          return false;
+        }
+        // 判断输入的章节下标规范性 
+        if (index < 1) {
+          layer.msg('章节数必须为大于0的数', { time: 1000 });
+          return false;
+        }
+
+        // 加载动画
+        var index = layer.load(0, { shade: false, });
+
+        $.ajax({
+          url: "http://127.0.0.1:8001/after/chapter/showByBTitle"
+          , type: "get"
+          , data: {
+            "bTitle": $('#bTitle').val()
+            , "index": num
+          }
+          , success: function (datas) {
+            // 响应后先关闭加载动画
+            layer.close(index)
+            // 若数据为空，则显示无数据
+            if (datas.count == 0) {
+              layer.alert("暂无此书籍或章节数据", {
+                icon: 6
+              });
+              return false;
+            }
+            // 将作者展示到页面上
+            $('#author').val(datas.data[0].author);
+            $('#cTit').val(datas.data[0].cTitle);
+            // 展示内容到编辑器中
+            layedit.setContent(inde, datas.data[0].words);
+          }
+          , error: function () {
+            alert("查询失败！！！")
+          }
+        });
+      });
+
+
+      // 提交修改内容
+      $('#add').on('click', function () {
+        // 用于同步编辑器内容到textarea（一般用于异步提交）,就是刷新一下编辑器
+        layedit.sync(inde);
+        console.log($('#words').val())
+        $.ajax({
+          url: "http://127.0.0.1:8001/after/chapter/updateByCTitle"
+          , type: "post"
+          , data: {
+            "cTitle": $('#cTit').val()
+            , "words": $('#words').val()
+          }
+          , success: function (datas) {
+            if (datas.data != 0) {
+              layer.alert('更新成功，好牛逼'
+                , { icon: 6 }
+                , function () {
+                  window.location.reload();
+                });
+              return false;
+            }
+            layer.msg('更新失败', { time: 1000 });
+            return false;
+          }
+          , error: function(){
+            layer.alert('修改失败')
+          }
+        });
+      });
+
+
+    });
+
+
+
+</script>
+
+</html>

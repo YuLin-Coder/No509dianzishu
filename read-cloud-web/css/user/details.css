@@ -1,0 +1,28 @@
+
+
+
+/* 身体 */
+.box_con{border:2px solid #eeeeee; overflow:hidden;width:1020px;margin:20px auto; background: #ffffff;}
+.con_top { border-bottom: #eeeeee 1px solid; text-align:left; padding: 0px 10px; line-height:40px; height:40px; background-color:#eae5f8;}
+.con_top #bdshare{float:right;line-height:20px;padding-right:20px;padding-top:9px;text-align:right;}
+#sidebar{float:left;width:140px;text-align:left;}
+#maininfo{float:right;width:800px;}
+#fmimg{background-color:#eeeeee;float:left;width:126px;margin:12px;margin-left: 30px;padding:0.1px;position:relative;}
+#fmimg img{border:medium none;height:150px;width:120px;margin:3px;}
+
+#fmimg span{top:8px;right:8px;width:88px;height:88px;position:absolute;display:block;z-index:999;}
+#fmimg .a {background-position:0 -206px;}
+#fmimg .b {background-position:0 -294px;}
+
+
+#info{	padding:10px;margin:10px;font-size:15px;}
+#info h1{font-family:é»‘ä½“;font-size:28px;font-weight:700;overflow:hidden;margin:auto;padding:1px;}
+#info p{height:25px;line-height:25px;padding-top:2px;width:350px;margin:auto;overflow:hidden;float:left;}
+#intro{	width:96%;overflow:hidden;line-height:150%;border-top:1px dashed #88C6E5;padding:10px;font-size:13px;}
+#intro p{text-indent:2em; margin-top:10px;}
+#listtj{width:960px;  padding:5px; float:left;}
+#list{padding:2px;}
+#list dl{width: 100%;float:left;overflow:hidden;padding-bottom:1px;margin:auto;}
+#list dt{background:none repeat scroll 0 0 #eae5f8;display:inline;float:left;font-size:14px;line-height:28px;overflow:hidden;text-align:center;vertical-align:middle;width:98%;margin:auto auto 5px;padding:5px 10px;}
+#list dd{border-bottom:1px dashed #CCC;display:inline;float:left;height:25px;line-height:200%;margin-bottom:5px;overflow:hidden;text-align:center;text-indent:10px;vertical-align:middle;width:33%;}
+#list dd a:link{color:#444;}

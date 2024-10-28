@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.2</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="../css/admin/font.css">
+    <link rel="stylesheet" href="../css/admin/xadmin.css">
+    <script type="text/javascript" src="../js/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/checkAdmin.js"></script>
+</head>
+
+<body>
+    
+    <div class="layui-fluid">
+        <div class="layui-row">
+            <form class="layui-form">
+
+                <input type="text" id="bId" name="bId" style="display: none;">
+
+                <div class="layui-form-item">
+                    <label for="bTitle" class="layui-form-label">
+                        <span class="x-red">*</span>书名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="bTitle" name="bTitle" readonly autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="author" class="layui-form-label">
+                        <span class="x-red">*</span>作者</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="author" name="author" readonly autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="cTitle" class="layui-form-label" id="cTi"></label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="cTitle" name="cTitle" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <textarea id="words" style="display: none;"></textarea>
+
+                <div class="layui-form-item">
+                    <label for="L_repass" class="layui-form-label"></label>
+                    <div class="layui-btn" lay-filter="add" lay-submit="">添加</div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider', 'layedit']
+            , function () {
+                var laydate = layui.laydate //日期
+                    , laypage = layui.laypage //分页
+                    , layer = layui.layer //弹层
+                    , table = layui.table //表格
+                    , carousel = layui.carousel //轮播
+                    , upload = layui.upload //上传
+                    , element = layui.element //元素操作
+                    , slider = layui.slider //滑块
+                    , $ = layui.jquery
+                    , form = layui.form // 表单
+                    , layedit = layui.layedit // 富文本编辑
+
+                // 取值
+                var storage = window.sessionStorage;
+                // 想要用sessionStorage存储对象，必须先将对象转化为json字符串
+                var lineData = JSON.parse(storage.getItem('lineData'));
+                // 将数据显示到表格中
+                $('#bId').val(lineData.bId);
+                $('#bTitle').val(lineData.bTitle);
+                $('#author').val(lineData.author);
+
+                //建立编辑器
+                var inde = layedit.build('words', {
+                    tool: ['strong' //加粗
+                        , 'italic' //斜体
+                        , 'underline' //下划线
+                        , 'del' //删除线
+                        , '|' //分割线
+                        , 'left' //左对齐
+                        , 'center' //居中对齐
+                        , 'right' //右对齐
+                    ]
+                });
+
+                var index = layer.load(1, {shade: false,});
+
+
+                // 获取下拉框数据
+                layer.ready(function () {
+                    $.ajax({
+                        url: "http://127.0.0.1:8001/after/book/showByBId"
+                        , type: "get"
+                        , data: { "bId": $('#bId').val() }
+                        , success: function (datas) {
+                            if (datas.data != null) {
+                                $('#cTi').html('第' + (datas.data + 1) + '章');
+                            }
+                            layer.close(index)
+                        }
+                        , error: function () {
+                            layer.close(index)
+                            alert("获取章节数失败！！！")
+                            
+                        }
+                    });
+                });
+
+                //监听提交
+                form.on('submit(add)', function (data) {
+                    layedit.sync(inde);
+                    var cTi = $('#cTi').html()
+                    var cTit = $('#cTitle').val()
+                    var cTitle = cTi + ' ' + cTit;
+                    $.ajax({
+                        url: "http://127.0.0.1:8001/after/book/addChap"
+                        , type: "post"
+                        , data: {
+                            'bId': $('#bId').val(),
+                            'cTitle': cTitle,
+                            'words': $('#words').val()
+                        }
+                        , success: function (datas) {
+                            if (datas.data != null) {
+                                layer.alert("添加成功", {
+                                    icon: 6
+                                },
+                                    function () {
+                                        // 获取父窗口
+                                        window.parent.location.reload();
+                                        // 获得frame索引
+                                        var index = parent.layer.getFrameIndex(window.name);
+                                        //关闭当前frame
+                                        parent.layer.close(index);
+                                    });
+                                return false;
+                            }
+                        }
+                        , error: function () {
+                            alert("添加失败！！！")
+                        }
+                    });
+                });
+
+            });
+    </script>
+
+</body>
+
+</html>

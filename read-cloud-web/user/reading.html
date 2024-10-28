@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>阅读</title>
+  <link rel="stylesheet" type="text/css" href="../css/user/main.css">
+  <link rel="stylesheet" type="text/css" href="../css/layui/layui.css">
+  <script src="../js/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../js/xadmin.js"></script>
+  <script type="text/javascript" src="../js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" href="../css/user/reading.css">
+  <link rel="stylesheet" type="text/css" href="../css/user/conmont.css">
+  <script type="text/javascript" src="../js/checkUser.js"></script>
+</head>
+<script>
+  $(function () {
+    // 引入header
+    $(".headerpage").load("header.html");
+    // 引入footer
+    $(".footerpage").load("footer.html");
+  });
+</script>
+
+
+<body>
+  <div class="headerpage"></div>
+
+  <div class="content_read">
+    <div class="box_con">
+      <div class="con_top">
+
+      </div>
+      <div class="bookname">
+
+      </div>
+
+
+      <div id="content">
+        <br />
+        <!-- <p>遮天由笔趣阁（m.yuetutu.com）的书迷们免费提供分享,在线阅读，更多好看的小说请收藏本网站</p> -->
+
+        <!-- <p>笔趣阁（m.yuetutu.com）希望你喜欢书迷们第一时间分享的遮天最新章节内容，如果有错误内容和字体欢迎点击章节报错！喜欢请收藏我们官网：m.yuetutu.com</p> -->
+      </div>
+
+      <div class="bottem2">
+
+      </div>
+      <div id="hm_t_20123"></div>
+    </div>
+  </div>
+
+
+  <div class="footerpage"></div>
+</body>
+
+</html>
+<script>
+  $(function () {
+    // .search是获取地址栏中地址之后的所有书籍
+    var url = window.location.search.split('?');
+    // 获取到的参数是被转译过的，需要转译回来
+    var cTitle = decodeURIComponent(url[1])
+    var bId = decodeURIComponent(url[2])
+
+    $.ajax({
+      url: "http://127.0.0.1:8001/front/frReading"
+      , type: "get"
+      , data: {
+        "bId": bId
+        , "cTitle": cTitle
+      }
+      , success: function (datas) {
+        // 拿出各个值
+        var types = datas.data.types
+        var chapter = datas.data.chapter
+
+        // 分类列表模块
+        console.log(types)
+        for (var type of types) {
+          var ty = '';
+          ty += `<li><a href="./type.html?` + type.cate + `">` + type.cate + `</a></li>`
+          $('.top-nav-wrap .left-nav ul').append(ty)
+        }
+
+        // 正文模块
+        console.log(chapter)
+        // 小导航
+        var chapte = chapter[0]
+
+        var ch = '';
+        ch += `<a href="./index.html">云阅读</a> &gt;
+				        <a href=./type.html?`+ chapte.cate + ` >` + chapte.cate + `</a> &gt;
+				        <a href=./details.html?`+ chapte.bId + `>` + chapte.bTitle + `</a> &gt;` + chapte.cTitle + ` `
+        $('.box_con .con_top').append(ch)
+
+        // 正文顶部
+        var top = '';
+        top += `<h1>` + chapte.cTitle + `</h1>
+                <div class="bottem1">
+                  <a href="javascript:;" onclick="previousChapter('`+ chapte.bId + `','` + chapte.eTime + `')" >上一章</a> &larr;
+                  <a href=./details.html?`+ chapte.bId + `>章节目录</a> &rarr;
+                  <a href="javascript:;" onclick="nextChapter('`+ chapte.bId + `','` + chapte.eTime + `')" >下一章</a>
+                  <span><img src="../images/xin_2.svg" onclick="goods()"></span>
+                </div>`;
+        $('.box_con .bookname').append(top)
+
+        // 正文文字部分
+        var text = '';
+        text += `<br />
+                    `+ chapte.words + `
+                 <br />`
+        $('.box_con #content').append(text)
+
+        // 正文底部
+        var bot = '';
+        bot += `<a href="javascript:;" onclick="previousChapter('` + chapte.bId + `','` + chapte.eTime + `')" >上一章</a> &larr;
+				<a href=./details.html?`+ chapte.bId + `>章节目录</a> &rarr;
+				<a href="javascript:;" onclick="nextChapter('`+ chapte.bId + `','` + chapte.eTime + `')">下一章</a>
+                <span><img src="../images/xin_2.svg" onclick="goods()"></span>`
+        $('.box_con .bottem2').append(bot)
+      }
+    });
+
+  });
+
+  // 点赞
+  function goods () {
+    $('.box_con .bottem1 span img').attr('src','../images/xin_red_2.svg')
+    $('.box_con .bottem2 span img').attr('src','../images/xin_red_2.svg')
+  }
+
+  function nextChapter(bId, eTime) {
+    console.log(bId, eTime)
+    var compare = '';
+    $.ajax({
+      url: "http://127.0.0.1:8001/front/frNextOrPrevious"
+      , type: "get"
+      , data: { 
+        'bId': bId
+        ,'eTime': eTime
+        ,'compare': compare 
+      }
+      , success: function (datas) {
+        if(datas.data.length == 0){
+          alert('这是最后一章，看完啦')
+          return false;
+        }
+        console.log(datas.data)
+        var tit = encodeURIComponent(datas.data[0].cTitle)
+        var bId = datas.data[0].bId
+        location.href = 'reading.html?'+ tit +'?'+ bId ;
+      }
+    });
+  }
+
+  function previousChapter(bId, eTime) {
+    console.log(bId, eTime)
+    // 随便给值，不是空字符串就行
+    var compare = 'a';
+    $.ajax({
+      url: "http://127.0.0.1:8001/front/frNextOrPrevious"
+      , type: "get"
+      , data: { 
+        'bId': bId
+        ,'eTime': eTime
+        ,'compare': compare 
+      }
+      , success: function (datas) {
+        if(datas.data.length == 0){
+          alert('这是第一章，前面没有啦')
+          return false;
+        }
+        console.log(datas.data)
+        var tit = encodeURIComponent(datas.data[0].cTitle)
+        var bId = datas.data[0].bId
+        location.href = 'reading.html?'+ tit +'?'+ bId ;
+      }
+    });
+  }
+
+</script>

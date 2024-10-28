@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>分类</title>
+	<link rel="stylesheet" type="text/css" href="../css/user/main.css">
+	<link rel="stylesheet" type="text/css" href="../css/layui/layui.css">
+	<script src="../js/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../js/xadmin.js"></script>
+	<script type="text/javascript" src="../js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+	<link rel="stylesheet" href="../css/user/type.css">
+  <link rel="stylesheet" type="text/css" href="../css/user/conmont.css">
+  <script type="text/javascript" src="../js/checkUser.js"></script>
+</head>
+<script>
+	$(function () {
+		// 引入header
+		$(".headerpage").load("header.html");
+		// 引入footer
+		$(".footerpage").load("footer.html");
+	});
+</script>
+
+<body>
+	<div id="wrapper">
+		<div class="headerpage"></div>
+
+
+		
+		<!-- 身体 -->
+		<div class="box-center">
+
+			<div class="hot-rec-wrap mb20">
+				<div class="inner-wrap cf">
+					<div class="fl all-wrap">
+						<h3>热门推荐</h3>
+						<div class="type-new-list cf">
+							<div class="line l1"></div>
+							<div class="line l2"></div>
+							<ul>
+			
+
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="newscontent">
+				<div class="l">
+					<h2>最近更新小说列表</h2>
+					<ul>
+						
+						
+					</ul>
+				</div>
+			</div>
+
+		</div>
+		<div class="footerpage"></div>
+	</div>
+</body>
+
+</html>
+<script>
+	$(function () {
+		// .search是获取地址栏中地址之后的所有书籍
+		var url = window.location.search.split('?');
+		// 获取到的参数是被转译过的，需要转译回来
+		var cate = decodeURIComponent(url[1])
+		console.log(cate)
+		$.ajax({
+			url: "http://127.0.0.1:8001/front/frType"
+			, type: "get"
+			, data: {
+				'lastNnm': 2,
+				'cate': cate
+			}
+			, success: function (datas) {
+				// 拿出各个值
+        var types = datas.data.types
+        var hotRec = datas.data.hotRec
+        var lastChapter = datas.data.lastChapter
+
+				// 分类列表模块
+				console.log(types)
+				for (var type of types) {
+          var ty = '';
+          ty += `<li><a href="./type.html?`+ type.cate +`">` + type.cate + `</a></li>`
+          $('.top-nav-wrap .left-nav ul').append(ty)
+        }
+
+				// 热门推荐模块
+				console.log(hotRec)
+				for (var hotRe of hotRec) {
+          var ho = '';
+          ho += `<li>
+									<div class="book-img fl">
+										<a href=./details.html?`+ hotRe.bId +`>
+											<img src=`+ hotRe.bPicture +` alt="" style="width:72px;height:96px">
+										</a>
+									</div>
+									<div class="book-info fl">
+										<h4>`+ hotRe.bTitle + `</h4>
+										<p>`+ hotRe.introduce + `</p>
+										<h5 class="auth">`+ hotRe.author + `</h5>
+									</div>
+								</li>`
+          $('.all-wrap .type-new-list ul').append(ho)
+        }
+
+				// 最近更新小说列表
+				console.log(lastChapter)
+				for (var laCh of lastChapter) {
+          var time = laCh.eTime.substring(0,10)
+          // 转译章节题目 后才能传多个数据 ,否则只能传三个汉字
+          var tit = encodeURIComponent(laCh.cTitle)
+          var lC = '';
+          lC += `<li>
+										<span class="s2">《<a href=./details.html?`+ laCh.bId +` >`+ laCh.bTitle +`</a>》</span>
+										<span class="s3"><a href=./reading.html?`+ tit +`?`+ laCh.bId +` >`+ laCh.cTitle +`
+											</a>(`+ time +`)</span>
+										<span class="s5">`+ laCh.author +`</span>
+									</li>`
+          $('#newscontent .l ul').append(lC)
+        }
+
+			}
+			, error: function () {
+				alert("连接超时，请刷新页面！！！")
+			}
+		})
+	});
+</script>

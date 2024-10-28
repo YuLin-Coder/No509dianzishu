@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.2</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="../css/admin/font.css">
+    <link rel="stylesheet" href="../css/admin/xadmin.css">
+
+    <script type="text/javascript" src="../js/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/checkAdmin.js"></script>
+</head>
+
+<body>
+    
+    <div class="layui-fluid">
+        <div class="layui-row">
+            <form class="layui-form">
+
+                <input type="text" id="bId" name="bId" style="display: none;">
+
+                <div class="layui-form-item">
+                    <label for="bTitle" class="layui-form-label">
+                        <span class="x-red">*</span>书名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="bTitle" name="bTitle" required="" lay-verify="nikename"
+                            autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="author" class="layui-form-label">
+                        <span class="x-red">*</span>作者</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="author" name="author" required="" lay-verify="nikename"
+                            autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">点赞数</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="goodNum" id="goodNum" lay-verify="required|number" autocomplete="off"
+                            class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">阅读数</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="readNum" id="readNum" lay-verify="required|number" autocomplete="off"
+                            class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">
+                        <span class="x-red">*</span>搜索类型</label>
+                    <div class="layui-input-inline">
+                        <select name="cate" id="cate" lay-filter="category" lay-search="">
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-upload" style="padding-left: 110px;">
+                    <button type="button" class="layui-btn layui-btn-danger" id="test1">
+                        <i class="layui-icon"></i>上传图片</button>
+                    <div class="layui-inline layui-word-aux">
+                        这里以限制 300KB 为例</div>
+                    <div class="layui-upload-list" style="max-width: 60%;">
+                        <img class="layui-upload-img" id="demo1">
+                        <p id="demoText"></p>
+                        <input type="text" id="bPicture" value="" name="bPicture" style="display:none" />
+                    </div>
+                </div>
+
+                <div class="layui-form-item layui-form-text">
+                    <label class="layui-form-label">简介</label>
+                    <div class="layui-input-block">
+                        <textarea placeholder="请输入内容" id="introduce" name="introduce" class="layui-textarea">
+                      </textarea></div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label for="L_repass" class="layui-form-label"></label>
+                    <div class="layui-btn" lay-filter="add" lay-submit="">修改</div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function () {
+            var laydate = layui.laydate //日期
+                , laypage = layui.laypage //分页
+                , layer = layui.layer //弹层
+                , table = layui.table //表格
+                , carousel = layui.carousel //轮播
+                , upload = layui.upload //上传
+                , element = layui.element //元素操作
+                , slider = layui.slider //滑块
+                , $ = layui.jquery
+                , form = layui.form; // 表单
+
+
+            // 取值
+            var storage = window.sessionStorage;
+            // 想要用sessionStorage存储对象，必须先将对象转化为json字符串
+            var lineData = JSON.parse(storage.getItem('lineData'));
+            // 将数据显示到表格中
+            $('#bId').val(lineData.bId);
+            $('#readNum').val(lineData.readNum);
+            $('#goodNum').val(lineData.goodNum);
+            $('#bTitle').val(lineData.bTitle);
+            $('#author').val(lineData.author);
+            $('#cate').val(lineData.cate);
+            $('#introduce').val(lineData.introduce);
+
+
+
+            // 图片上传
+            upload.render({
+                elem: '#test1'
+                , url: 'http://127.0.0.1:8001/common/uploadPic' //改成您自己的上传接口
+                , data: {
+                    type_img: 1
+                }
+                , size: 5000
+                , before: function (obj) {
+                    //预读本地文件示例，不支持ie8
+                    obj.preview(function (index, file, result) {
+                        $('#demo1').attr('src', result); //图片链接（base64）
+                    });
+                }
+                , done: function (res) {
+                    if (res.code == 200) {
+                        // 将地址赋给input框，方便获取
+                        $('#bPicture').val(res.data);
+                        return layer.msg(res.msg);
+                    }
+                    layer.msg('上传失败');
+                    console.log(res)
+                }
+            });
+
+
+
+            // 获取下拉框数据
+            layer.ready(function () {
+                $.ajax({
+                    url: "http://127.0.0.1:8001/after/type/showAll"
+                    , type: "post"
+                    , data: {}
+                    , success: function (datas) {
+                        if (datas.data != null) {
+                            $.each(datas.data, function (index, item) {
+                                $('#cate').append(new Option(item.cate, item.cate));// 下拉菜单里添加元素
+                            });
+                            layui.form.render("select");
+                        }
+                    }
+                    , error: function () {
+                        alert("查询类型失败！！！")
+                    }
+                });
+            });
+
+
+            //监听提交
+            form.on('submit(add)',
+                function (data) {
+                    var good = $('#goodNum').val()
+                    var read = $('#readNum').val()
+                    if (parseInt(read) < parseInt(good)) {
+                        layer.alert('阅读量必须大于或等于点赞量');
+                        return false;
+                    }
+                    //发异步，把数据提交给
+                    $.ajax({
+                        url: "http://127.0.0.1:8001/after/book/updateOne"
+                        , type: "post"
+                        , contentType: 'application/json;charset=UTF-8'
+                        , data: JSON.stringify(data.field)
+                        , success: function (datas) {
+                            if (datas.data != null) {
+                              alert("修改成功！！！")
+                            }
+                            return false;
+                        }
+                        , error: function () {
+                            alert("修改失败！！！")
+                        }
+                    });
+
+
+
+                });
+
+        });
+    </script>
+</body>
+
+</html>

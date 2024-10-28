@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.2</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+        content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="stylesheet" href="../css/admin/font.css">
+    <link rel="stylesheet" href="../css/admin/xadmin.css">
+    <script type="text/javascript" src="../js/layui/layui.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/xadmin.js"></script>
+    <script type="text/javascript" src="../js/checkAdmin.js"></script>
+</head>
+
+<body>
+    
+    <div class="layui-fluid">
+        <div class="layui-row">
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label for="account" class="layui-form-label">账号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="account" name="account" disabled="none" class="layui-input"></div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="password" class="layui-form-label">
+                        <span class="x-red">*</span>旧密码</label>
+                    <div class="layui-input-inline">
+                        <input type="password" id="password" name="password" required="" lay-verify="required"
+                            autocomplete="off" class="layui-input"></div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="newPassword" class="layui-form-label">
+                        <span class="x-red">*</span>新密码</label>
+                    <div class="layui-input-inline">
+                        <input type="password" id="newPassword" name="newPassword" readonly="readonly" required=""
+                            lay-verify="required" autocomplete="off" class="layui-input"></div>
+                    <div class="layui-form-mid layui-word-aux">6到16个字符</div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_repass" class="layui-form-label">
+                        <span class="x-red">*</span>确认密码</label>
+                    <div class="layui-input-inline">
+                        <input type="password" id="L_repass" name="repass" readonly="readonly" required=""
+                            lay-verify="required" autocomplete="off" class="layui-input"></div>
+                </div>
+                <div class="layui-form-item">
+                    <label for="L_repass" class="layui-form-label"></label>
+                    <button class="layui-btn" lay-filter="save" id="editBtn" lay-submit="">确认修改</button></div>
+            </form>
+        </div>
+    </div>
+    <script>
+        layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function () {
+            var laydate = layui.laydate //日期
+                , laypage = layui.laypage //分页
+                , layer = layui.layer //弹层
+                , table = layui.table //表格
+                , carousel = layui.carousel //轮播
+                , upload = layui.upload //上传
+                , element = layui.element //元素操作
+                , slider = layui.slider //滑块
+                , $ = layui.jquery
+                , form = layui.form // 表单
+
+            // 取值
+            var storage = window.sessionStorage;
+            // 想要用sessionStorage存储对象，必须先将对象转化为json字符串
+            var lineData = storage.getItem('lineData');
+            // 将数据显示到表格中
+            $('#account').val(lineData.account);
+
+            // 禁用密码input框
+            $('#newPassword').attr("readonly", "readonly");
+            // 禁用确认密码input框
+            $('#L_repass').attr("readonly", "readonly");
+            // 禁用按钮
+            $('#editBtn').addClass("layui-btn-disabled").attr("disabled", true);
+
+            // 输入旧密码后，验证输入的旧密码，是否正确
+            $('#password').blur(function () {
+                $.ajax({
+                    url: "http://127.0.0.1:8001/after/admin/showAA"
+                    , type: "get"
+                    , data: {
+                        'password': $('#password').val(),
+                        'account': $('#account').val()
+                    }
+                    , success: function (datas) {
+                        if (datas.data != null) {
+                            // 解除禁用
+                            $('#newPassword').removeAttr("readonly");
+                            $('#L_repass').removeAttr("readonly");
+                            $('#editBtn').removeClass("layui-btn-disabled").attr("disabled", false);
+                            return true;
+                        }
+                        layer.msg('密码输入错误', { time: 1000 });
+                        // 禁用密码input框
+                        $('#newPassword').attr("readonly", "readonly");
+                        // 禁用确认密码input框
+                        $('#L_repass').attr("readonly", "readonly");
+                        // 禁用按钮
+                        $('#editBtn').addClass("layui-btn-disabled").attr("disabled", true);
+                        return false;
+                    }
+                });
+            });
+
+
+            //监听提交
+            form.on('submit(save)',
+                function (data) {
+                    $.ajax({
+                        url: "http://127.0.0.1:8001/after/admin/updateByUAccount"
+                        , type: "get"
+                        , data: {
+                            "account": $('#account').val(),
+                            "password": $('#newPassword').val()
+                        }
+                        , success: function (datas) {
+                            if (datas.data != null) {
+                                layer.alert("修改成功", {
+                                    icon: 6
+                                },
+                                    function () {
+                                        // 获得frame索引
+                                        var index = parent.layer.getFrameIndex(window.name);
+                                        //关闭当前frame
+                                        parent.layer.close(index);
+                                    });
+                                return false;
+                            }
+                            layer.msg('修改失败', { time: 1000 });
+                            return false;
+                        }
+                    });
+                    return false;
+                });
+
+            // 验证两次密码的一致性
+            form.verify({
+                pass: [/(.+){6,12}$/, '密码必须6到12位'],
+                repass: function (value) {
+                    if ($('#newPassword').val() != $('#L_repass').val()) {
+                        return '两次密码不一致';
+                    }
+                }
+            });
+
+        });
+    </script>
+
+</body>
+
+</html>

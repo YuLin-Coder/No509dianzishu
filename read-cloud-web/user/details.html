@@ -1,0 +1,138 @@
+<!doctype html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>详情页</title>
+  <link rel="stylesheet" type="text/css" href="../css/user/main.css">
+  <link rel="stylesheet" type="text/css" href="../css/layui/layui.css">
+  <script src="../js/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../js/xadmin.js"></script>
+  <script type="text/javascript" src="../js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" href="../css/user/details.css">
+  <link rel="stylesheet" type="text/css" href="../css/user/conmont.css">
+  <script type="text/javascript" src="../js/checkUser.js"></script>
+</head>
+<script>
+  $(function () {
+    // 引入header
+    $(".headerpage").load("header.html");
+    // 引入footer
+    $(".footerpage").load("footer.html");
+  });
+</script>
+
+
+<body>
+  <div id="wrapper">
+
+    <div class="headerpage"></div>
+
+
+    <div class="box_con">
+      <div class="aaa"></div>
+
+    </div>
+
+    <div class="dahengfu">
+    </div>
+
+    <div class="box_con">
+      <div id="list">
+        <dl id="dl">
+          
+          
+        </dl>
+      </div>
+    </div>
+
+    <div style="height: 100px;"></div>
+
+
+    <div id="footer" name="footer" class="footerpage"></div>
+  </div>
+  <script>
+    $(function () {
+      // .search是获取地址栏中地址之后的所有书籍
+      var url = window.location.search.split('?');
+      // 获取到的参数是被转译过的，需要转译回来
+      var bId = decodeURIComponent(url[1])
+      console.log(bId)
+      
+      $.ajax({
+        url: "http://127.0.0.1:8001/front/frDetail"
+        , type: "get"
+        , data: { "bId": bId }
+        , success: function (datas) {
+          var types = datas.data.types
+          var book = datas.data.book
+          var chapters = datas.data.chapters
+
+          // 分类列表模块
+          console.log(types)
+          for (var type of types) {
+            var ty = '';
+            ty += `<li><a href="./type.html?` + type.cate + `">` + type.cate + `</a></li>`
+            $('.top-nav-wrap .left-nav ul').append(ty)
+          }
+
+          // 书籍详情模块
+          console.log(book)
+          for (var bo of book) {
+            var time = bo.updateTime.substring(0,20)
+            var b = '';
+            b += `<div class="con_top">
+                    <div id="bdshare" class="bdshare_b" style="line-height: 12px;"></div>
+                    <a href="./index.html">云阅读</a> &gt; `+ bo.cate +` &gt; `+ bo.bTitle +`
+                  </div>
+                  <div id="maininfo">
+                    <div id="info">
+                      <h1>`+ bo.bTitle +`</h1>
+                      <p>作&nbsp;&nbsp;&nbsp;&nbsp;者：`+ bo.author +`</p>
+                      <p>最后更新：2020-12-02 14:03:40</p>
+                    </div>
+                    <div id="intro">
+                        <p>`+ bo.introduce +`</p>
+                    </div>
+                  </div>
+                  <div id="sidebar">
+                    <div id="fmimg"><img src=`+ bo.bPicture +` width="152" height="195" /></div>
+                  </div>`
+            $('#wrapper .box_con .aaa').append(b)
+          }
+
+          // 章节模块
+          console.log(chapters)
+          var chap = chapters[chapters.length-1]
+          if(chap == null ){
+            alert('该书还未添加章节,两秒后自动跳回首页')
+            setTimeout(function(){
+              location.href = './index.html'
+            } ,2000);
+            return false;
+          }
+          // 转译章节题目 后才能传多个数据 ,否则只能传三个汉字
+          var ti = encodeURIComponent(chap.cTitle)
+          var cc = '';
+          cc +=`<dt><b>《`+ book[0].bTitle +`》最新章节</b></dt>
+                <dd><a href=./reading.html?`+ ti +`?`+ chap.bId +` >`+ chap.cTitle +`</a></dd>
+                <dt>《`+ book[0].bTitle +`》正文</dt>` 
+          $('#list dl').append(cc);
+          for (var chapter of chapters) {
+            // 转译章节题目 后才能传多个数据 ,否则只能传三个汉字
+            var tit = encodeURIComponent(chapter.cTitle)
+            var ch = '';
+            ch += `<dd><a href=./reading.html?`+ tit +`?`+ chapter.bId +` >`+ chapter.cTitle +`</a></dd>`
+            $('#list dl').append(ch)
+          }
+
+        }
+        , error: function () {
+          alert("连接超时，请刷新页面！！！")
+        }
+      });
+    })
+  </script>
+</body>
+
+</html>

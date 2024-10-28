@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+
+<head>
+  <meta charset="UTF-8">
+  <title>欢迎页面-X-admin2.2</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport"
+    content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+  <link rel="stylesheet" href="../css/admin/font.css">
+  <link rel="stylesheet" href="../css/admin/xadmin.css">
+  <script src="../js/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="../js/xadmin.js"></script>
+  <script type="text/javascript" src="../js/checkAdmin.js"></script>
+</head>
+
+
+<body>
+  <div class="x-nav">
+    <span class="layui-breadcrumb">
+      <a href="">首页</a>
+      <a href="">演示</a>
+      <a>
+        <cite>导航元素</cite></a>
+    </span>
+    <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right"
+      onclick="location.reload()" title="刷新">
+      <i class="layui-icon layui-icon-refresh" style="line-height:30px"></i></a>
+  </div>
+  <div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+      <div class="layui-col-md12">
+        <div class="layui-card">
+          <div class="layui-card-body ">
+            <form class="layui-form layui-col-space5">
+              <div class="demoTable">
+                <div class="layui-inline">
+                  <input class="layui-input" name="id" id="demoReload" placeholder="请输入用户名" autocomplete="off">
+                </div>
+                <div class="layui-btn" data-type="reload">搜索</div>
+              </div>
+            </form>
+          </div>
+          <div class="layui-card-header demoDel">
+            <button class="layui-btn layui-btn-danger" id="delAll" data-type="getCheckData"><i
+                class="layui-icon"></i>批量注销</button>
+            <button class="layui-btn" lay-event="add" onclick="xadmin.open('添加用户', 'user-add.html', 560, 500)"><i
+                class="layui-icon"></i>添加</button>
+          </div>
+          <div class="layui-card-body layui-table-body layui-table-main">
+            <!-- 表格 -->
+            <table class="layui-table layui-form" lay-filter="test" id="tab"></table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- 操作按钮 -->
+<script type="text/html" id="barDemo">
+  <!-- <button class="layui-btn layui-btn layui-btn-xs" id="edit" lay-event="edit" >
+    <i class="layui-icon">&#xe642;</i>编辑</button>
+  <button class="layui-btn layui-btn layui-btn-xs" id="editPwd" lay-event="editPwd" >
+    <i class="layui-icon">&#xe642;</i>修改密码</button> -->
+
+    {{#  if(d.status == 1 ){ }}
+    <button class="layui-btn-danger layui-btn layui-btn-xs" id="del" lay-event="del" href="javascript:;">
+      &nbsp;&nbsp;注销&nbsp;&nbsp;</button>
+    {{#  } else { }}
+    <button class="layui-btn layui-btn-xs" id="del" lay-event="del" href="javascript:;">
+      &nbsp;&nbsp;启用&nbsp;&nbsp;</button>
+    {{#  } }}
+</script>
+
+<!-- 表格渲染中性别转化 -->
+<script type="text/html" id="sex">
+  {{#  if(d.sex ==1 ){ }}
+    男
+  {{#  } else { }}
+    女
+  {{#  } }}
+</script>
+<!-- 状态转化 -->
+<script type="text/html" id="status">
+  {{#  if(d.status == 1 ){ }}
+    正常
+  {{#  } else { }}
+    注销          
+  {{#  } }}
+</script>
+<script type="text/javascript">
+  layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function () {
+    var laydate = layui.laydate //日期
+      , laypage = layui.laypage //分页
+      , layer = layui.layer //弹层
+      , table = layui.table //表格
+      , carousel = layui.carousel //轮播
+      , upload = layui.upload //上传
+      , element = layui.element //元素操作
+      , slider = layui.slider //滑块
+      , $ = layui.jquery
+      , form = layui.form; // 表单
+
+      var index = layer.load(0, {shade: false,});
+
+    // 表格渲染
+    table.render({
+      elem: '#tab'
+      , id: 'tableId'
+      , url: "http://127.0.0.1:8001/after/user/showAll"
+      , method: 'post'
+      , response: {statusCode: 200} //重新规定成功的状态码为 200，table 组件默认为 0
+      , page: true //禁止分页
+      , cellMinWidth: 10 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+      , skin: 'line' //表格风格 line （行边框风格）row （列边框风格）nob （无边框风格）
+      , cols: [[
+        { type: 'checkbox', fixed: 'left', width: 80 }
+        , { field: 'uId', title: 'ID', align: 'center', templet: '' }  //templet:自定义模板,可以用作处理后台的数据再进行展示
+        , { field: 'uAccount', title: '账号', align: 'center', templet: '' }
+        , { field: 'sex', title: '性别', align: 'center', templet: '#sex' }
+        , { field: 'phone', title: '手机号', align: 'center', templet: '' }
+        , { field: 'email', title: '绑定邮箱', align: 'center', templet: '' }
+        , { field: 'status', title: '账号状态', align: 'center', templet: '#status' }
+        , { fixed: 'right', title: '操作', align: 'center', width: 110, toolbar: '#barDemo' }
+      ]]
+      , done: function (res, curr, count) {
+        layer.close(index)
+      }
+    });
+
+    // 根据用户名查询， 方法重载
+    $('.demoTable .layui-btn').on('click', function () {
+      console.log($('#demoReload').val())
+      //执行重载
+      table.reload('tableId', {
+        page: {
+          curr: 1 //重新从第 1 页开始
+        }
+        , where: {  //设定异步数据接口的额外参数，任意设  
+          uAcc: $('#demoReload').val()
+        }
+      }, 'data');
+    });
+
+
+
+
+    //监听table中的工具栏,tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+    table.on('tool(test)', function (obj) {
+      // 获取当前行
+      var data = obj.data;
+      var layEvent = obj.event; //获得 lay-event 对应的值（也可以是表头的 event 参数对应的值）
+      var tr = obj.tr; //获得当前行 tr 的DOM对象
+
+      // 判断操作  使用lay-event
+      switch (obj.event) {
+        /* 修改基本数据 */
+        case 'edit':
+          // 使用sessionStorage传递本行数据
+          var storage = window.sessionStorage;
+          // 想要用sessionStorage存储对象，必须先将对象转化为json字符串
+          var lineData = JSON.stringify(data);
+          storage.setItem('lineData', lineData);
+          var bObj = document.getElementById("edit");
+          bObj.onclick = edit();
+          function edit() {
+            xadmin.open('编辑', 'user-edit.html', 560, 350);
+          }
+          break;
+        /* 修改密码 */
+        case 'editPwd':
+          // 使用sessionStorage传递本行数据
+          var storage = window.sessionStorage;
+          // 想要用sessionStorage存储对象，必须先将对象转化为json字符串
+          var lineData = JSON.stringify(data);
+          storage.setItem('lineData', lineData);
+          var bObj = document.getElementById("editPwd");
+          bObj.onclick = editPwd();
+          function editPwd() {
+            xadmin.open('修改密码', 'user-editPwd.html', 550, 350)
+          }
+          break;
+        /* 注销单个用户 */
+        case 'del':
+          //发异步注销用户
+          $.ajax({
+            url: "http://127.0.0.1:8001/after/user/deleteById"
+            , type: "post"
+            , data: {
+              "uId": data.uId,
+              "status": data.status
+            }
+            , success: function (datas) {
+              var a = datas.msg;
+              if (datas.data != null) {
+                layer.alert(datas.msg
+                  , { icon: 6 }
+                  , function () {
+                    window.location.reload();
+                  });
+                return false;
+              }
+              layer.msg('操作失败', { time: 1000 });
+              return false;
+            }
+          });
+          break;
+      }
+    });
+
+
+    // 获取被选中的数据,给批量删除用
+    // 定义全局数组
+    var ids = [];
+    var $ = layui.$, active = {
+      getCheckData: function () { //获取选中数据
+        // 将数组长度变为零，清空之前选中的值
+        ids.length = 0;
+        var checkStatus = table.checkStatus('tableId')
+          , data = checkStatus.data;
+        for (var i = 0; i < data.length; i++) {
+          ids.push(data[i].uId);
+        }
+      }
+    };
+
+    $('.demoDel .layui-btn').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+
+    /* 批量注销用户 */
+    $('#delAll').on('click', function () {
+      if (ids.length != 0) {
+        layer.confirm('确认要删除吗？' + ids.toString(), function (index) {
+          //捉到所有被选中的，发异步进行删除
+          $.ajax({
+            url: "http://127.0.0.1:8001/after/user/deleteByIds"
+            , type: "post"
+            // 不写后台借不到值
+            , traditional: true
+            , data: { uIds: ids }
+            , success: function (datas) {
+              if (datas.data != null) {
+                layer.alert("注销成功", {
+                  icon: 6
+                },
+                  function () {
+                    // 绑定一个刷新按钮进行刷新
+                    $(".layui-icon-refresh").click();
+                  });
+                return false;
+              }
+              layer.msg('操作失败', { time: 1000 });
+            }
+          });
+        });
+      } else {
+        layer.msg('您还未选择要删除的元素', { time: 2000 })
+      }
+    });
+
+
+
+  });
+
+
+
+
+
+</script>
+
+</html>

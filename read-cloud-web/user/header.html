@@ -1,0 +1,95 @@
+<!-- 顶部头 -->
+<div class="header">
+  <div class="top-head box-center">
+    <h1 class="logo" title="云阅读">
+      <a href=""><em></em></a>
+    </h1>
+    <div class="search-wrap">
+      <form action="" method="get" id="fromUrl">
+        <input type="text" class="search-box" id="bTitle" name="bTitle" placeholder="请输入书名" autocomplete="off" value="">
+        <label for="" class="search-btn" id="search-btn">
+          <em class="iconfont"></em>
+        </label>
+      </form>
+    </div>
+    <div class="user-wrap">
+      <div class="avatar">
+        <a href="javascript:;"><img src="../images/head.svg" alt="" style=""></a>
+        <ul>
+          <li style="line-height: 25px;margin-top: 6px; cursor:pointer;" id="1">个人信息</li>
+          <li style="cursor:pointer;" id="2">修改密码</li>
+          <li style="cursor:pointer;" id="3">退出</li>
+        </ul>
+      </div>
+      <!-- <ul>
+			<a href=""><img src="../lib/static/img/shujia2.svg" alt="" style="margin-top: -30px;">
+				<li style="margin-top: 29px;">书架</li>
+			</a>
+		</ul> -->
+    </div>
+  </div>
+  <div class="top-advert-wrap box-center">
+    <a href=""><img src="../images/20210924153442dbetsdpbtg.jpg" alt=""></a>
+  </div>
+  <div class="top-nav-wrap box-center">
+    <div class="left-nav fl">
+      <ul>
+        <li class="type" id="navType">
+          <a href="./index.html"> <em class="iconfont fl"></em>首页</a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<script type="text/javascript">
+  // 将头像下拉框动态展示
+  $('.header .top-head .user-wrap .avatar').mouseenter(function () {
+    $('.header .top-head .user-wrap ul').css('display', 'block');
+  })
+  $('.header .top-head .user-wrap .avatar').mouseleave(function () {
+    $('.header .top-head .user-wrap ul').css('display', 'none');
+  })
+  // 赋予点击操作
+  $('#3').click(function () {
+    // 清空登录时存到sessionStorage里面的值
+    sessionStorage.removeItem('user');
+    location.href = 'login.html'
+  });
+  layui.use(['laydate', 'laypage', 'layer', 'table', 'carousel', 'upload', 'element', 'slider'], function () {
+    var laydate = layui.laydate //日期
+      , layer = layui.layer //弹层
+    $('#2').click(function () {
+      xadmin.open('修改密码', 'user-editPwd.html', 550, 350)
+    });
+    $('#1').click(function () {
+      xadmin.open('修改个人信息', 'user-edit.html', 560, 350)
+    });
+  });
+
+</script>
+
+<script>
+
+  $("#search-btn").click(function () {
+    var bTitle = $('#bTitle').val()
+    console.log(bTitle)
+    $.ajax({
+      url: "http://127.0.0.1:8001/front/frSearch"
+      , type: "get"
+      , data: { 'bTitle': bTitle }
+      , success: function (datas) {
+        console.log(datas)
+        var storage = window.sessionStorage;
+        // 想要用sessionStorage存储对象，必须先将对象转化为json字符串
+        var json = JSON.stringify(datas.data);
+        storage.setItem('searchByBTitle', json);
+        location.href = 'search.html'
+      }
+
+    });
+  });
+
+</script>

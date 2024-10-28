@@ -1,0 +1,86 @@
+
+
+
+/* 身体 */
+.box_con {
+	border: 2px solid #eeeeee;
+	overflow: hidden;
+	width: 976px;
+	margin: 10px auto;
+	margin-bottom: 100px;
+	background: #ffffff;
+}
+
+.con_top {
+	border-bottom: #ffffff 1px solid;
+	text-align: left;
+	padding: 0px 10px;
+	line-height: 40px;
+	height: 40px;
+	background-color: #eae5f8;
+}
+
+.con_top #bdshare {
+	float: right;
+	line-height: 20px;
+	padding-right: 20px;
+	padding-top: 9px;
+	text-align: right;
+}
+
+.con_top #page_set {
+	float: right;
+	text-align: right;
+	height: 20px;
+	line-height: 20px;
+	padding-right: 5px;
+	padding-top: 10px;
+}
+
+.bookname h1 {
+	font: 25px/35px é»‘ä½“;
+	padding-top: 10px;
+	text-align: center;
+}
+
+.bottem1 {
+	clear: both!important;
+	text-align: center;
+	width: 900px;
+	margin: auto;
+	margin-top: 15px;
+}
+
+.box_con #content, .box_con #content div, .box_con #content a {
+	font-size: 14pt;
+	letter-spacing: 0.2em;
+	line-height: 150%;
+	padding-top: 15px;
+	width: 85%;
+	margin: auto;
+}
+
+.box_con #content p div img, .box_con #content p img, .imagecontent, .divimage {
+	text-align: center;
+	margin: auto;
+}
+
+.bottem2 {
+	border-top: 1px dashed #88C6E5;
+	clear: both!important;
+	text-align: center;
+	width: 900px;
+	margin: auto 20px;
+	padding: 15px;
+}
+
+.bottem2 span img {
+	margin-top: -2px;
+}
+
+.bottem a, .bottem1 a, .bottem2 a {
+	color: #085308;
+	font-size: 14px;
+	margin-left: 10px;
+	margin-right: 10px;
+}

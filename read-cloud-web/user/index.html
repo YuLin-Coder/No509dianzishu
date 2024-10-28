@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>云阅读-小说网</title>
+  <link rel="stylesheet" type="text/css" href="../css/user/main.css">
+  <link rel="stylesheet" type="text/css" href="../css/layui/layui.css">
+  <link rel="stylesheet" href="../css/user/index.css">
+  <link rel="stylesheet" type="text/css" href="../css/user/conmont.css">
+  <script type="text/javascript" src="../js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+  <script type="text/javascript" src="../js/checkUser.js"></script>
+  <script src="../js/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../js/xadmin.js"></script>
+</head>
+<script>
+  $(function () {
+    // 引入header
+    $(".headerpage").load("header.html");
+    // 引入footer
+    $(".footerpage").load("footer.html");
+  });
+</script>
+
+
+<body>
+  <div class="wrap">
+    <!-- 头部条 -->
+    <div class="headerpage"></div>
+
+    <!-- 身体 -->
+    <div class="box-center">
+      <div class="focus-slider-wrap mb20 cf">
+          <div class="banner">
+            <ul>
+
+            </ul>
+          </div>
+      </div>
+      <div class="hot-rec-wrap mb20">
+        <div class="inner-wrap cf">
+          <div class="fl all-wrap">
+            <h3>热门推荐</h3>
+            <div class="type-new-list cf">
+              <div class="line l1"></div>
+              <div class="line l2"></div>
+              <ul>
+
+
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="main">
+        <div id="newscontent">
+          <div class="l">
+            <h2>最近更新小说列表</h2>
+            <ul>
+
+            </ul>
+          </div>
+          <div class="r">
+            <h2>最新入库小说</h2>
+            <ul>
+
+            </ul>
+          </div>
+          <div class="clear"></div>
+        </div>
+      </div>
+    </div>
+    <!-- 底部 -->
+    <div class="footerpage"></div>
+  </div>
+</body>
+
+</html>
+<script>
+
+  var cArr=["p3","p2","p1"];
+  var index=0;
+  //上一张
+  function previmg(){
+    // 数组头部添加元素
+    cArr.unshift(cArr[2]);
+    // 数组末尾删除元素
+    cArr.pop();
+    //i是元素的索引，从0开始
+    //e为当前处理的元素
+    //each循环，当前处理的元素移除所有的class，然后添加数组索引i的class
+    $(".banner li").each(function(i,e){
+      $(e).removeClass().addClass(cArr[i]);
+    })
+    index--;
+    if (index<0) {
+      index=2;
+    }
+  }
+
+  //下一张
+  function nextimg(){
+    // 数组末尾追加元素
+    cArr.push(cArr[0]);
+    // 数组头部删除元素
+    cArr.shift();
+    $(".banner li").each(function(i,e){
+      $(e).removeClass().addClass(cArr[i]);
+    })
+    index++;
+    if (index>2) {
+      index=0;
+    }
+  }
+
+  //点击class为p2的元素触发上一张照片的函数
+  $(document).on("click",".p1",function(){
+    previmg();
+    return false;//返回一个false值，让a标签不跳转
+  });
+
+  //点击class为p4的元素触发下一张照片的函数
+  $(document).on("click",".p3",function(){
+    nextimg();
+    return false;
+  });
+
+  //          鼠标移入box时清除定时器
+  $(".banner").mouseover(function(){
+    clearInterval(timer);
+  })
+
+  //          鼠标移出box时开始定时器
+  $(".banner").mouseleave(function(){
+    timer=setInterval(nextimg,4000);
+  })
+
+  //          进入页面自动开始定时器
+  timer=setInterval(nextimg,4000);
+
+
+
+  $(function () {
+    $.ajax({
+      url: "http://127.0.0.1:8001/front/frIndex"
+      , type: "get"
+      , data: {
+        'lastNnm': 6 ,
+        'lastBookNum': 6 ,
+      }
+      , success: function (datas) {
+        let types = datas.data.types
+        let banners = datas.data.banners
+        let hotRec = datas.data.hotRec
+        let lastChapter = datas.data.lastChapter
+        let lastBook = datas.data.lastBook
+
+        // 分类列表模块
+        console.log(types)
+        for (var type of types) {
+          var ty = '';
+          ty += `<li><a href="./type.html?` + type.cate + `">` + type.cate + `</a></li>`
+          $('.top-nav-wrap .left-nav ul').append(ty)
+        }
+
+        // banner模块
+        console.log(banners)
+        let ban = '';
+        ban += `<li class="p3"><a href=./details.html?`+ banners[0].bId +`><img src=`+ banners[0].baPicture +` alt="" /></a></li>`
+        $('.focus-slider-wrap .banner ul').append(ban)
+
+        // 热门推荐模块
+        console.log(hotRec)
+        for (var hotRe of hotRec) {
+          var ho = '';
+          ho += `<li>
+                  <div class="book-img fl">
+                    <a href=./details.html?`+ hotRe.bId + `>
+                      <img src=`+ hotRe.bPicture + ` style="width:72px;height:96px" >
+                    </a>
+                  </div>
+                  <div class="book-info fl">
+                    <h4>`+ hotRe.bTitle + `</h4>
+                    <p>`+ hotRe.introduce + `</p>
+                    <h5 class="auth">`+ hotRe.author + `</h5>
+                  </div>
+                </li>`
+          $('.all-wrap .type-new-list ul').append(ho)
+        }
+
+        // 最近更新小说列表（左）
+        console.log(lastChapter)
+        for (var laCh of lastChapter) {
+          // 转移章节题目
+          var tit = encodeURIComponent(laCh.cTitle)
+          // 截取时间格式为yyyy-mm-dd
+          var time = laCh.eTime.substring(0, 10)
+          var lC = '';
+          lC += `<li>
+                  <span class="s1"><a title="其他小说小说列表" href=./type.html?`+ laCh.cate + `>` + laCh.cate + `</a></span>
+                  <span class="s2"><a href=./details.html?`+ laCh.bId + ` >` + laCh.bTitle + `</a></span>
+                  <span class="s3"><a href=./reading.html?`+ tit + `?` + laCh.bId + ` >` + laCh.cTitle + `</a></span>
+                  <span class="s4"><a >`+ laCh.author + `</a></span>
+                  <span class="s5">`+ time + `</span>
+                </li>`
+          $('#newscontent .l ul').append(lC)
+        }
+
+        // 最近入库小说（右）
+        console.log(lastBook)
+        for (var laBo of lastBook) {
+          var lB = '';
+          lB += `<li>
+                  <span class="s1"><a title="其他小说小说列表" href=./type.html?`+ laBo.cate + `>` + laBo.cate + `</a></span>
+                  <span class="s2"><a href=./details.html?`+ laBo.bId + `>` + laBo.bTitle + `</a></span>
+                  <span class="s5"><a >`+ laBo.author + `</a></span>
+                </li>`
+          $('#newscontent .r ul').append(lB)
+        }
+
+      }
+      , error: function () {
+        alert("连接超时，请刷新页面！！！")
+      }
+    });
+  });
+</script>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>分类</title>
+  <link rel="stylesheet" type="text/css" href="../css/user/main.css">
+  <link rel="stylesheet" type="text/css" href="../css/layui/layui.css">
+  <script src="../js/layui/layui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="../js/xadmin.js"></script>
+  <script type="text/javascript" src="../js/jquery-3.2.1/jquery-3.2.1.min.js"></script>
+  <link rel="stylesheet" href="../css/user/search.css">
+  <link rel="stylesheet" type="text/css" href="../css/user/conmont.css">
+  <script type="text/javascript" src="../js/checkUser.js"></script>
+</head>
+<script>
+  $(function () {
+
+  });
+</script>
+
+<body>
+  <div id="wrapper">
+    <!-- 头 -->
+    <div class="headerpage">
+
+    </div>
+    
+
+    <div class="result-wrap box-center cf" style="background-color: #fff;">
+      <div class="main-content-wrap fl" style="width: 980px;margin-left: 20px;margin-top: 20px;">
+        <div id="result-list" data-l1="3">
+          <div class="book-img-text">
+            <ul>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div style="height: 100px;"></div>
+
+
+    <!-- 尾 -->
+    <div class="footerpage"></div>
+  </div>
+</body>
+
+</html>
+<script>
+
+  $(function () {
+    var storage = window.sessionStorage;
+    // 先将json字符串转化为对象
+    var datas = JSON.parse(storage.getItem('searchByBTitle'));
+    var types = datas.types
+    var books = datas.books
+
+
+    // 引入header
+      // 因为load是异步方法，如果for循环写在下面，会先执行for循环，
+        // 拼接的时候就找不到标签了，所以拼不上，回调函数是等自己的方法执行完毕之后再执行，就ok了
+    $(".headerpage").load("header.html", function () {
+      // 分类列表模块
+      for (var type of types) {
+        var ty = '';
+        ty += `<li><a href="./type.html?` + type.cate + `">` + type.cate + `</a></li>`
+        $(".left-nav ul").append(ty)
+       
+      }
+    });
+    // 引入footer
+    $(".footerpage").load("footer.html");
+
+    // 如果无数据，则提示
+    if(books.length == 0){
+      var aa = `<div style="text-align: center;font-size: 24px;font-weight: bolder;line-height: 170px; 
+      height: 217px;">还没有相关书籍，去看看别的吧</div>`
+      $('.result-wrap').append(aa);
+    }
+
+    console.log(books)
+    for (var da of books) {
+      var time = da.updateTime.substring(0, 10)
+      var bb = '';
+      bb += `<li class="res-book-item" data-bid="1015179225" data-rid="1">
+                <div class="book-img-box">
+                  <a href=./details.html?`+ da.bId +` >
+                    <img src=`+ da.bPicture + `>
+                  </a>
+                </div>
+                <div class="book-mid-info">
+                  <h4>
+                    <a href=./details.html?`+ da.bId +` >
+                      <cite class="red-kw">`+ da.bTitle + `</cite>
+                    </a>
+                  </h4>
+                  <p class="author">
+                    <a class="name" >`+ da.author + `</a> 
+                    <em>|</em>
+                    <a href=./type.html?` + da.cate + `>`+ da.cate + `</a>
+                  </p>
+                  <p class="intro">`+ da.introduce + `</p>
+                  <p class="update">
+                    <span>最近更新  `+ time + `</span>
+                  </p>
+                </div>
+                <div class="book-right-info">
+                  <div class="total">
+                    <p><span>  `+ da.readNum + `</span>总阅读量</p>
+                  </div>
+                  <p class="btn">
+                    <a class="red-btn" href=./details.html?`+ da.bId +` >书籍详情</a>
+                  </p>
+                </div>
+              </li>`
+      $('.book-img-text ul').append(bb);
+    }
+  })
+
+</script>

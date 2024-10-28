@@ -1,0 +1,339 @@
+
+
+
+
+/* 身体 */
+.book-img-text li {
+  height: 162px;
+  padding-top: 25px;
+  border-top: 1px solid #e6e6e6
+}
+
+.book-img-text li:first-child {
+  padding-top: 0;
+  border-top: none
+}
+
+.book-img-text .book-img-box, .book-img-text .book-mid-info {
+  float: left
+}
+
+.book-img-text .book-right-info {
+  float: right
+}
+
+.book-img-text .book-img-box {
+  position: relative;
+  z-index: 3;
+  width: 102px;
+  height: 136px;
+  margin-right: 16px
+}
+
+.book-img-text .book-img-box a {
+  display: block;
+  overflow: hidden;
+  width: 102px;
+  height: 136px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .35)
+}
+
+.book-img-text .book-img-box a img {
+  width: 102px;
+  height: 136px;
+  -webkit-transition: -webkit-transform .4s ease-out;
+  -moz-transition: -moz-transform .4s ease-out;
+  -ms-transition: -ms-transform .4s ease-out;
+  transition: transform .4s ease-out
+}
+
+.book-img-text .book-img-box a img:hover {
+  -webkit-transform: scale(1.1);
+  -moz-transform: scale(1.1);
+  -o-transform: scale(1.1);
+  transform: scale(1.1)
+}
+
+.book-img-text .book-mid-info {
+  width: 542px;
+  margin-top: 5px
+}
+
+.book-img-text .book-mid-info h4 {
+  font: 18px/24px PingFangSC-Regular, HelveticaNeue-Light, 'Helvetica Neue Light', 'Microsoft YaHei', sans-serif;
+  overflow: hidden;
+  height: 24px;
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+
+
+.book-img-text .book-mid-info p {
+  font-family: PingFangSC-Regular, '-apple-system', Simsun;
+  font-size: 12px
+}
+
+.book-img-text .book-mid-info p.author {
+  overflow: hidden;
+  height: 16px;
+  margin-bottom: 6px
+}
+
+.book-img-text .book-mid-info p.author img {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin: 1px 5px 0 0
+}
+
+.book-img-text .book-mid-info p.author a {
+  line-height: 16px;
+  float: left;
+  color: #a6a6a6
+}
+
+.book-img-text .book-mid-info p.author a:hover {
+  color: #ed4259
+}
+
+.book-img-text .book-mid-info p.author a.name:hover {
+  color: #262626
+}
+
+.book-img-text .book-mid-info p.author i {
+  font-family: PingFangSC-Regular, '-apple-system', Simsun;
+  line-height: 16px;
+  float: left;
+  margin: 0 3px;
+  color: #a6a6a6
+}
+
+.book-img-text .book-mid-info p.author em {
+  font-family: Arial;
+  float: left;
+  margin: 1px 8px 0;
+  color: #e6e6e6
+}
+
+.book-img-text .book-mid-info p.author span {
+  line-height: 16px;
+  float: left;
+  color: #a6a6a6
+}
+
+.book-img-text .book-mid-info p.intro {
+  font-size: 14px;
+  line-height: 24px;
+  overflow: hidden;
+  height: 48px;
+  margin-bottom: 8px;
+  color: #666
+}
+
+.book-img-text .book-mid-info p.intro cite.red-kw {
+  color: #bf2c24
+}
+
+.book-img-text .book-mid-info p.update {
+  line-height: 22px
+}
+
+.book-img-text .book-mid-info p.update a {
+  display: inline-block;
+  vertical-align: middle;
+  color: #3f5a93
+}
+
+.book-img-text .book-mid-info p.update a:hover {
+  color: #2972cc
+}
+
+.book-img-text .book-mid-info p.update a.red {
+  color: #bf2c24
+}
+
+.book-img-text .book-mid-info p.update a.red.def {
+  cursor: default
+}
+
+.book-img-text .book-mid-info p.update i {
+  font-family: Arial;
+  display: inline-block;
+  margin: 0 5px;
+  vertical-align: middle;
+  color: #a6a6a6
+}
+
+.book-img-text .book-mid-info p.update em {
+  font-family: Arial;
+  margin: 0 5px
+}
+
+.book-img-text .book-mid-info p.update b {
+  font: 12px/22px PingFangSC-Regular, '-apple-system', Simsun;
+  display: inline-block;
+  vertical-align: middle;
+  color: #b5b5b5
+}
+
+.book-img-text .book-mid-info p.update b.red {
+  color: #bf2c24
+}
+
+.book-img-text .book-mid-info p.update em, .book-img-text .book-mid-info p.update span {
+  display: inline-block;
+  vertical-align: middle;
+  color: #b5b5b5
+}
+
+.book-img-text .book-right-info {
+  position: relative;
+  width: 224px;
+  height: 136px;
+  margin-top: 5px
+}
+
+.book-img-text .book-right-info .total {
+  text-align: right
+}
+
+.book-img-text .book-right-info .total p {
+  font: 12px/16px PingFangSC-Regular, '-apple-system', Simsun;
+  margin-bottom: 6px;
+  color: #666
+}
+
+.book-img-text .book-right-info .total p span {
+  font: 12px/18px PingFangSC-Regular, '-apple-system', Simsun;
+  margin-right: 3px;
+  color: #262626
+}
+
+.book-img-text .book-right-info .price {
+  padding-top: 35px;
+  text-align: right
+}
+
+.book-img-text .book-right-info .price p {
+  font: 18px/24px Arial;
+  margin-bottom: 5px
+}
+
+.book-img-text .book-right-info .price p span {
+  font-family: Arial;
+  margin-right: 5px
+}
+
+.book-img-text .book-right-info .price s {
+  font: 12px/1 Arial;
+  display: block;
+  color: #a6a6a6
+}
+
+.book-img-text .book-right-info .btn {
+  font-size: 0;
+  position: absolute;
+  bottom: 4px;
+}
+
+.book-img-text .book-right-info .btn a {
+  font: 14px/32px PingFangSC-Regular, '-apple-system', Simsun;
+  display: inline-block;
+  width: 98px;
+  height: 32px;
+  text-align: center;
+  vertical-align: middle;
+  border-width: 1px;
+  border-style: solid
+}
+
+.book-img-text .book-right-info .btn a.red-btn {
+  margin-left: 120px;
+  color: #fff;
+  border-color: #bf2c24;
+  background: #bf2c24
+}
+
+.book-img-text .book-right-info .btn a.red-btn:hover {
+  border-color: #ed4259;
+  background: #ed4259
+}
+
+.book-img-text .book-right-info .btn a.red-btn.disabled {
+  cursor: default;
+  color: #a6a6a6;
+  border-color: #a6a6a6;
+  background: 0 0
+}
+
+.book-img-text .book-right-info .btn a.blue-btn {
+  color: #3f5a93;
+  border-color: #3f5a93
+}
+
+.book-img-text .book-right-info .btn a.blue-btn:hover {
+  color: #2972cc;
+  border-color: #2972cc;
+  background: #f0f5ff
+}
+
+.book-img-text .book-right-info .btn a.in-shelf {
+  cursor: default;
+  color: #a6a6a6;
+  border-color: #a6a6a6
+}
+
+.book-img-text dd {
+  margin-bottom: 24px
+}
+
+.book-img-text .all-img-list li {
+  float: left;
+  width: 477px
+}
+
+.book-img-text .all-img-list li .book-mid-info {
+  width: 344px
+}
+
+.book-img-text .all-img-list li .book-mid-info p.author span {
+  color: #a6a6a6
+}
+
+.book-img-text .all-img-list li .book-mid-info p.update {
+  color: inherit
+}
+
+.book-img-text .all-img-list li .book-mid-info p.update span {
+  color: #a6a6a6
+}
+
+.book-img-text .all-img-list li .book-mid-info p.update span.red {
+  color: #bf2c24
+}
+
+
+.fl {
+  float: left
+}
+
+.fr {
+  float: right
+}
+
+.hidden {
+  display: none
+}
+
+.cf {
+  zoom: 1
+}
+
+.cf:after, .cf:before {
+  display: table;
+  content: ''
+}
+
+.cf:after {
+  clear: both
+}
